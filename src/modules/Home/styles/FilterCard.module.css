@@ -1,0 +1,25 @@
+.filterCardContainer {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filterCardImage {
+    height: 80px;
+    width: 80px;
+}
+
+@media only screen and (max-width: 800px) {
+    .filterCardImage {
+        height: 60px;
+        width: 60px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .filterCardImage {
+        height: 50px;
+        width: 50px;
+    }
+}
