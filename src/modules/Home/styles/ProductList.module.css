@@ -1,0 +1,28 @@
+.productListContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 3%;
+}
+
+.productCard {
+    width: 22%; 
+    margin-bottom: 10px;
+}
+
+.cartModifyBtn {
+    background: transparent;
+    border: transparent;
+}
+
+@media only screen and (max-width: 800px) {
+    .productCard {
+        width: 30%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .productCard {
+        width: 47%;
+    }
+}
