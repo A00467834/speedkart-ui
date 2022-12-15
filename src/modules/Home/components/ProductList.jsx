@@ -3,6 +3,8 @@ import styles from '../styles/ProductList.module.css';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
+import {Button} from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const products = [
   {
@@ -83,14 +85,21 @@ const products = [
   },
 ];
 
-export const ProductList = () => {
+export const ProductList = (props) => {
+
+  const navigate = useNavigate();
+
   return (
     <div className={styles.productListContainer}>
       {products.map((product) => (
-        <Card className={styles.productCard}>
+        <Button onClick={() => navigate('/product')} style={{background: 'transparent'}} className={styles.productCard}>
+        <Card >
           <CardMedia component="img" alt="green iguana" height="140" image={product.imgSrc} />
           <CardActions style={{ justifyContent: 'space-between' }}>
-            <span>{product.title}</span>
+            <div>
+              <p style={{marginBottom: '0px'}}>{product.title}</p>
+              <p style={{fontSize: '12px'}}>500g</p>
+            </div>
             <div style={{ display: 'flex' }}>
               <button className={styles.cartModifyBtn}>+</button>
               <span>0</span>
@@ -98,6 +107,7 @@ export const ProductList = () => {
             </div>
           </CardActions>
         </Card>
+        </Button>
       ))}
     </div>
   );

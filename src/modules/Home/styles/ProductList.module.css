@@ -8,6 +8,8 @@
 .productCard {
     width: 22%; 
     margin-bottom: 10px;
+    border: transparent;
+    padding: 0;
 }
 
 .cartModifyBtn {
