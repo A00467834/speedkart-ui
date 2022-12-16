@@ -137,7 +137,7 @@ export const RegisterPage = () => {
       !zipPostal.error
     ) {
       //   await fetch(
-      //     'https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyDeOekGPW4_3v_W8H9IwjDAtnravRBEPRs',
+
       //     {
       //       method: 'POST',
       //       body: JSON.stringify({
