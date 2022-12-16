@@ -12,6 +12,8 @@ export const authSlice = createSlice({
   }
 })
 
-export const getUser = state => {console.log(state, 'state'); return state.userData.user}
+export const getUser = state => state.user.user;
+export const getUserId = state => state.user.user.customerId;
 export const { setUser } = authSlice.actions
+
 export default authSlice.reducer

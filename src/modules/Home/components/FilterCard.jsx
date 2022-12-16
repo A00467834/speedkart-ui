@@ -1,12 +1,19 @@
 import React from 'react';
-import { Image } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 import styles from '../styles/FilterCard.module.css';
 
-export const FilterCard = ({ category }) => {
+export const FilterCard = ({ category, selectedFilterId, categoryChange }) => {
+  let selectedStyles = {};
+  if (selectedFilterId === category.categoryId) {
+    selectedStyles = {
+      background: 'black',
+      color: 'white',
+    };
+  }
   return (
-    <div className={styles.filterCardContainer}>
-      <Image className={styles.filterCardImage} src={category.imgUrl} />
-      <span>{category.title}</span>
-    </div>
+    <Button className={styles.filterCardContainer} style={selectedStyles} onClick={() => categoryChange(category.categoryId)}>
+      <Image className={styles.filterCardImage} src={category.imageURL} />
+      <span>{category.name}</span>
+    </Button>
   );
 };
