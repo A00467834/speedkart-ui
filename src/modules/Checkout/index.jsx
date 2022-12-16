@@ -23,10 +23,10 @@ export default class App extends React.Component {
         issuer: "",
         focused: "",
         formData: null,
-        numberTouched: false,
-        nameTouched: false,
-        expiryTouched: false,
-        cvcTouched: false,
+        isCardNumberValid: false,
+        isNameOnCardValid: false,
+        isExpiryValid: false,
+        isCVCValid: false,
     };
 
     handleCallback = ({ issuer }, isValid) => {
@@ -61,27 +61,26 @@ export default class App extends React.Component {
 
     handleInputValidate = ({ target }) => {
         if (target.name === "number") {
-            var isCardValid = validateCardType(target.value);
-            if (!isCardValid) {
-                alert("Card Number is invalid. Please enter a valid card number.");
+            this.setState({isCardNumberValid: validateCardType(target.value)});
+            if (!this.state.isCardNumberValid) {
+                // alert("Card Number is invalid. Please enter a valid card number.");
             }
         } else if (target.name == "name") {
-            var isNameOnCardValid = validateNameOnCard(target.value);
-            if (!isNameOnCardValid) {
-                alert("Name on card cannot contain these characters: ;:!@#$%^*+?\/<>1234567890");
+            this.setState({isNameOnCardValid: validateNameOnCard(target.value)});
+            if (!this.state.isNameOnCardValid) {
+                // alert("Name on card cannot contain these characters: ;:!@#$%^*+?\/<>1234567890");
             }
         } else if (target.name === "expiry") {
-            var isExpiryValid = validateExpirationDate(target.value);
-            if (!isExpiryValid) {
-                alert("Expiry date is invalid");
+            this.setState({isExpiryValid: validateExpirationDate(target.value)});
+            if (!this.state.isExpiryValid) {
+                // alert("Expiry date is invalid");
             }
         } else if (target.name === "cvc") {
-            var isCVCValid = target.value.length === 3;
-            if (!isCVCValid) {
-                alert("CVC is invalid");
-            }            
+            this.setState({isCVCValid: target.value.length === 3});
+            if (!this.state.isCVCValid) {
+                // alert("CVC is invalid");
+            }
         }
-
         this.setState({ [target.name]: target.value });
     };
 
@@ -102,12 +101,6 @@ export default class App extends React.Component {
 
     render() {
         const { name, number, expiry, cvc, focused, issuer, formData } = this.state;
-        // const visaPattern = /^(?:4[0-9]{12}(?:[0-9]{6})?)$/;
-        // // const mastPattern = /^(?:5[1-5][0-9]{2}\s[0-9]{4}\s[0-9]{4}\s[0-9]{4})$/;
-        // const mastPattern = /^(?:5[1-5][0-9]{2}\s\d{4}\s\d{4}\s\d{4})$/;
-        // const amexPattern = /^(?:3[47][0-9]{13})$/;
-        // \d{4}\s\d{4}\s\d{4}\s\d{4}
-
         return (
         <div key="Payment">
             <div className="App-payment">
