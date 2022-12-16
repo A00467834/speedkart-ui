@@ -6,6 +6,8 @@ import CardMedia from '@mui/material/CardMedia';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { FcSearch } from 'react-icons/fc';
+import { FormControl, InputAdornment, TextField } from '@material-ui/core';
 import { getProducts } from '../../../store/reducers/productsSlice';
 import { getUserId } from '../../../store/reducers/authSlice';
 import { updateProductQuantity } from '../../../store/reducers/productsSlice';
@@ -91,7 +93,7 @@ import axiosWrapper from '../../../apis/axiosCreate';
 //   },
 // ];
 
-export const ProductList = (props) => {
+export const ProductList = ({searchOnChange}) => {
   const navigate = useNavigate();
   const products = useSelector(getProducts);
   const customerId = useSelector(getUserId);
@@ -146,72 +148,93 @@ export const ProductList = (props) => {
   };
 
   return (
-    <div className={styles.productListContainer}>
-      {products.map((product) => (
-        <Button
-          onClick={() => navigate('/product')}
-          style={{ background: 'transparent' }}
-          className={styles.productCard}
-        >
-          <Card style={{ textAlign: 'left' }}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              height="140"
-              image="https://media.istockphoto.com/id/941825878/photo/tomato-with-slice-isolated-with-clipping-path.jpg?s=612x612&w=0&k=20&c=P3PQlDAxzgx5i1hGCHKEcBy-rZmqn4f5CZPggWnh9yQ="
-            />
-            <p
-              style={{
-                marginBottom: '0px',
-                padding: '8px',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              }}
-            >
-              {product.productName}
-            </p>
-            <CardActions style={{ justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ fontSize: '12px' }}>500g</p>
-                <p style={{ fontSize: '12px' }}>{product.productPrice}$</p>
-              </div>
-              <div
+    <>
+      <FormControl style={{ width: '100%', padding: '10px' }}>
+        <TextField
+          size="small"
+          variant="outlined"
+          onChange={searchOnChange}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">{<FcSearch />}</InputAdornment>,
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                // style={{ display: showClearIcon }}
+                // onClick={handleClick}
+              >
+                {/* <ClearIcon /> */}
+              </InputAdornment>
+            ),
+          }}
+        />
+      </FormControl>
+      <div className={styles.productListContainer}>
+        {products.map((product) => (
+          <Button
+            onClick={() => navigate('/product')}
+            style={{ background: 'transparent' }}
+            className={styles.productCard}
+          >
+            <Card style={{ textAlign: 'left' }}>
+              <CardMedia
+                component="img"
+                alt="green iguana"
+                height="140"
+                image="https://media.istockphoto.com/id/941825878/photo/tomato-with-slice-isolated-with-clipping-path.jpg?s=612x612&w=0&k=20&c=P3PQlDAxzgx5i1hGCHKEcBy-rZmqn4f5CZPggWnh9yQ="
+              />
+              <p
                 style={{
-                  background: product.quantity > 0 ? '#2587be' : 'transparent',
-                  color: product.quantity > 0 ? 'white' : 'black',
-                  textAlign: 'center',
-                  display: 'flex',
-                  border: `1px solid ${product.quantity > 0 ? 'white' : 'black'}`,
-                  borderRadius: '10px',
+                  marginBottom: '0px',
+                  padding: '8px',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
                 }}
               >
-                <button
-                  className={styles.cartModifyBtn}
-                  style={{ borderRight: `2px solid ${product.quantity > 0 ? 'white' : 'black'}` }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCart(product);
+                {product.productName}
+              </p>
+              <CardActions style={{ justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontSize: '12px' }}>500g</p>
+                  <p style={{ fontSize: '12px' }}>{product.productPrice}$</p>
+                </div>
+                <div
+                  style={{
+                    background: product.quantity > 0 ? '#2587be' : 'transparent',
+                    color: product.quantity > 0 ? 'white' : 'black',
+                    textAlign: 'center',
+                    display: 'flex',
+                    border: `1px solid ${product.quantity > 0 ? 'white' : 'black'}`,
+                    borderRadius: '10px',
                   }}
                 >
-                  -
-                </button>
-                <span style={{ padding: '5px' }}>{product.quantity}</span>
-                <button
-                  className={styles.cartModifyBtn}
-                  style={{ borderLeft: `2px solid ${product.quantity > 0 ? 'white' : 'black'}` }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCart(product, true);
-                  }}
-                >
-                  +
-                </button>
-              </div>
-            </CardActions>
-          </Card>
-        </Button>
-      ))}
-    </div>
+                  <button
+                    className={styles.cartModifyBtn}
+                    style={{ borderRight: `2px solid ${product.quantity > 0 ? 'white' : 'black'}` }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCart(product);
+                    }}
+                  >
+                    -
+                  </button>
+                  <span style={{ padding: '5px' }}>{product.quantity}</span>
+                  <button
+                    className={styles.cartModifyBtn}
+                    style={{ borderLeft: `2px solid ${product.quantity > 0 ? 'white' : 'black'}` }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCart(product, true);
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              </CardActions>
+            </Card>
+          </Button>
+        ))}
+      </div>
+    </>
   );
 };

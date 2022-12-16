@@ -1,0 +1,21 @@
+.registrationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.regFormTextFields {
+    text-align: left;
+}
+
+@media only screen and (min-width: 500px) {
+    .registrationForm {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .regFormTextFields {
+        width: 49%;
+    }
+}
