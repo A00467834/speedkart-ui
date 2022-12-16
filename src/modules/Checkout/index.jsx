@@ -1,12 +1,15 @@
 import React from "react";
 import Card from "react-credit-cards";
-
+import Payment from "payment";
 
 import {
   formatCreditCardNumber,
   formatCVC,
   formatExpirationDate,
-  formatFormData
+  formatFormData,
+  validateCardType,
+  validateNameOnCard,
+  validateExpirationDate
 } from "./utils";
 
 import "react-credit-cards/es/styles-compiled.css";
@@ -19,30 +22,65 @@ export default class App extends React.Component {
         cvc: "",
         issuer: "",
         focused: "",
-        formData: null
+        formData: null,
+        isCardNumberValid: false,
+        isNameOnCardValid: false,
+        isExpiryValid: false,
+        isCVCValid: false,
     };
 
     handleCallback = ({ issuer }, isValid) => {
-        if (isValid) {
-        this.setState({ issuer });
+        if(issuer == "amex" || issuer == "visa" || issuer == "master") {
+            if (isValid) {
+                this.setState({ issuer });
+            }
         }
     };
 
     handleInputFocus = ({ target }) => {
         this.setState({
-        focused: target.name
+            focused: target.name
         });
     };
 
     handleInputChange = ({ target }) => {
         if (target.name === "number") {
-        target.value = formatCreditCardNumber(target.value);
+            target.value = formatCreditCardNumber(target.value);
+        } else if (target.name == "name") {
+            var isNameValid = validateNameOnCard(target.value);
+            if (!isNameValid) {
+            }
         } else if (target.name === "expiry") {
-        target.value = formatExpirationDate(target.value);
+            target.value = formatExpirationDate(target.value);
         } else if (target.name === "cvc") {
-        target.value = formatCVC(target.value);
+            target.value = formatCVC(target.value);
         }
 
+        this.setState({ [target.name]: target.value });
+    };
+
+    handleInputValidate = ({ target }) => {
+        if (target.name === "number") {
+            this.setState({isCardNumberValid: validateCardType(target.value)});
+            if (!this.state.isCardNumberValid) {
+                // alert("Card Number is invalid. Please enter a valid card number.");
+            }
+        } else if (target.name == "name") {
+            this.setState({isNameOnCardValid: validateNameOnCard(target.value)});
+            if (!this.state.isNameOnCardValid) {
+                // alert("Name on card cannot contain these characters: ;:!@#$%^*+?\/<>1234567890");
+            }
+        } else if (target.name === "expiry") {
+            this.setState({isExpiryValid: validateExpirationDate(target.value)});
+            if (!this.state.isExpiryValid) {
+                // alert("Expiry date is invalid");
+            }
+        } else if (target.name === "cvc") {
+            this.setState({isCVCValid: target.value.length === 3});
+            if (!this.state.isCVCValid) {
+                // alert("CVC is invalid");
+            }
+        }
         this.setState({ [target.name]: target.value });
     };
 
@@ -60,9 +98,9 @@ export default class App extends React.Component {
         this.form.reset();
     };
 
+
     render() {
         const { name, number, expiry, cvc, focused, issuer, formData } = this.state;
-
         return (
         <div key="Payment">
             <div className="App-payment">
@@ -83,11 +121,13 @@ export default class App extends React.Component {
                         name="number"
                         className="form-control"
                         placeholder="Card Number"
-                        pattern="[\d| ]{16,22}"
+                        // pattern={visaPattern +"|" + mastPattern + "|" + amexPattern}
                         required
+                        maxLength={issuer == "amex"? 18: 19}
                         onChange={this.handleInputChange}
                         onFocus={this.handleInputFocus}
-                    />
+                        onBlur={this.handleInputValidate}
+                        />
                     <small>E.g.: 49..., 51..., 36..., 37...</small>
                     </div>
                     <div className="form-group">
@@ -99,7 +139,8 @@ export default class App extends React.Component {
                         required
                         onChange={this.handleInputChange}
                         onFocus={this.handleInputFocus}
-                    />
+                        onBlur={this.handleInputValidate}
+                        />
                     </div>
                     <div className="row">
                         <div className="col-6">
@@ -107,11 +148,12 @@ export default class App extends React.Component {
                             type="tel"
                             name="expiry"
                             className="form-control"
-                            placeholder="Valid Thru"
-                            pattern="\d\d/\d\d"
+                            placeholder="Valid Thru MM/YYYY"
+                            pattern="\d\d/\d\d\d\d"
                             required
                             onChange={this.handleInputChange}
                             onFocus={this.handleInputFocus}
+                            onBlur={this.handleInputValidate}
                             />
                         </div>
                         <div className="col-6">
@@ -120,10 +162,12 @@ export default class App extends React.Component {
                             name="cvc"
                             className="form-control"
                             placeholder="CVC"
-                            pattern="\d{3,4}"
+                            pattern="\d{3}"
                             required
+                            maxLength={3}
                             onChange={this.handleInputChange}
                             onFocus={this.handleInputFocus}
+                            onBlur={this.handleInputValidate}
                             />
                         </div>
                     </div>
@@ -140,9 +184,6 @@ export default class App extends React.Component {
                     </div>
                 )}
                 <hr style={{ margin: "60px 0 30px" }} />
-            </div>
-            <div className="App-credits">
-                Made with ❤️ at <a href="https://amaro.com/">AMARO</a>.
             </div>
         </div>
         );
