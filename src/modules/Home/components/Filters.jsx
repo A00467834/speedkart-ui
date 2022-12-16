@@ -13,6 +13,7 @@ export const Filters = ({categories, selectedFilterId, categoryChange}) => {
         overflowX: 'scroll',
         position: 'sticky',
         top: 0,
+        zIndex: 5,
         background: 'white',
         borderBottom: '1px solid black',
         borderBottomLeftRadius: '20px',

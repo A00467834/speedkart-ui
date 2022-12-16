@@ -11,6 +11,8 @@ import { OnScreenCart } from '../Cart/components/OnScreenCart';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useState } from 'react';
 
+let interval;
+
 export const HomePage = (props) => {
   const dispatch = useDispatch();
   const userData = useSelector(getUser);
@@ -22,20 +24,34 @@ export const HomePage = (props) => {
     await axiosWrapper.get(`/Cart/onScreenCart/${userData.customerId}`).then((resp) => {
       dispatch(setOnScreenCart(resp.data));
       getCategories();
+      getProducts(null, resp.data);
     });
   }, [userData, dispatch]);
 
   const getCategories = async () => {
     await axiosWrapper.get('/Categories').then((resp) => {
       setCategories(resp.data);
-      setSelectedCategoryId(resp.data[0].categoryId);
     });
   };
 
-  const getProducts = async (categoryId) => {
-    await axiosWrapper.get(`/Products/${categoryId}`).then((resp) => {
+  const getProducts = async (categoryId, onScreenCartData, searchVal) => {
+    let queryString = `/Products${
+      categoryId || searchVal
+        ? `?${
+            categoryId
+              ? `${
+                  searchVal
+                    ? `categoryId=${categoryId}&search=${searchVal}`
+                    : `categoryId=${categoryId}`
+                }`
+              : `search=${searchVal}`
+          }`
+        : ''
+    }`;
+    await axiosWrapper.get(queryString).then((resp) => {
       const modifiedProductsData = resp.data.map((product) => {
-        const cartProduct = onScreenCart.productQuantities.find(
+        const onScreenCartValues = onScreenCartData || onScreenCart;
+        const cartProduct = onScreenCartValues?.productQuantities.find(
           (prod) => prod.productId === product.productId,
         );
         if (cartProduct) {
@@ -53,12 +69,9 @@ export const HomePage = (props) => {
   }, [userData]);
 
   useEffect(() => {
-    // getCategories();
     if (window.localStorage.getItem('sessionId') && !userData.customerId) {
       checkValidSession(window.localStorage.getItem('sessionId'));
     }
-    // getOnScreenCart();
-    // getProducts();
   }, []);
 
   useEffect(() => {
@@ -73,6 +86,16 @@ export const HomePage = (props) => {
     });
   };
 
+  const searchOnChange = (ev) => {
+    if (interval) {
+      clearInterval(interval);
+    }
+    interval = setInterval(() => {
+      getProducts(selectedCatergoryId, onScreenCart, ev.target.value);
+      clearInterval(interval);
+    }, 2000);
+  };
+
   return userData.customerId ? (
     <div>
       <Filters
@@ -81,7 +104,7 @@ export const HomePage = (props) => {
         categoryChange={(val) => setSelectedCategoryId(val)}
       />
       <div style={{ padding: '10px' }}>
-        <ProductList />
+        <ProductList searchOnChange={searchOnChange} />
       </div>
       {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} /> : <></>}
     </div>
