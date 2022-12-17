@@ -14,16 +14,18 @@ export const Header = () => {
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const userId = useSelector(getUserId);
-  // const navigate = useNavigate();
   const handleLogOut = async () => {
-    var sessionId = window.localStorage.getItem('sessionId');
+    var sessionId=window.localStorage.getItem('sessionId');
     await axiosWrapper
       .delete(`/Customer/destroySession/` + sessionId)
       .then((res) => console.log('logged out'))
       .then(window.localStorage.clear())
-      // .then((res) => navigate('/login'))
+      .then((res) => navigate('/login'))
       .catch((err) => console.error('Error in logout'));
-  };
+  }
+  const handleProfile = () => {
+    navigate('/userProfile')
+  }
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -32,6 +34,7 @@ export const Header = () => {
   };
 
   return (
+
     <Navbar bg="dark" variant="dark">
       <Container>
         <Navbar.Brand onClick={() => navigate('/')}>
@@ -94,7 +97,9 @@ export const Header = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>My Profile</MenuItem>
+        <MenuItem onClick={handleProfile}>
+          My Profile
+        </MenuItem>
         <Divider />
         <MenuItem onClick={() => navigate('/orders')}>My Orders</MenuItem>
         <Divider />
