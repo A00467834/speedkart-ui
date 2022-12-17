@@ -10,13 +10,13 @@ import {RegisterPage} from './modules/AuthModule/RegisterPage';
 import { LandingPage } from './modules/AuthModule/LandingPage';
 // import {ForgotPasswordPage} from './modules/AuthModule/ForgotPasswordPage';
 import {Cart} from './modules/Cart';
-import Checkout from './modules/Checkout';
+import {Checkout} from './modules/Checkout';
 import { CartItemsList } from './modules/Cart/components/CartItemsList';
 import { OrderHistory } from './modules/Orders/components/OrderHistory';
 
 const App = (props) => {
   return (
-    <>
+    <div className="app-container">
       <Header /> 
       <BrowserRouter>
         <Routes>
@@ -30,7 +30,7 @@ const App = (props) => {
           <Route exact path='/checkout' element={<Checkout />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

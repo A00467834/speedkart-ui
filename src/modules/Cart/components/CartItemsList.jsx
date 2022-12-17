@@ -110,7 +110,7 @@ export const CartItemsList = (props) => {
         </Card>
       ))}
       <Button style={{ width: '100%' }} onClick={() => navigate('/checkout')}>
-        Checkout ({cartItems.reduce((acc, curr) => acc + curr.subtotal, 0)}$)
+        Checkout ({Math.round(cartItems.reduce((acc, curr) => acc + curr.subtotal, 0) * 100)/100}$)
       </Button>
     </div>
   );
