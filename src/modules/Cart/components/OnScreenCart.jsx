@@ -20,7 +20,7 @@ export const OnScreenCart = ({ onScreenCartItems, onScreenActiveOrders }) => {
   return (
     <div className={styles.OnScreenCartContainer}>
       {timeInMin > 0 ? (
-        <Button onClick={() => navigate('/cart')} className={styles.onScreenBtns}>
+        <Button onClick={() => navigate('/orders')} className={styles.onScreenBtns}>
           <div>
             {/* {totalItems} items | {totalPrice}$ */}
             {timeInMin} minutes <BiTimer />

@@ -6,16 +6,18 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserId } from '../../store/reducers/authSlice';
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
+  const userId = useSelector(getUserId);
   const handleLogOut = async () => {
     var sessionId=window.localStorage.getItem('sessionId');
     await axiosWrapper
-      .delete(`/Customer/destroySession/`+sessionId)
+      .delete(`/Customer/destroySession/` + sessionId)
       .then((res) => console.log('logged out'))
       .then(window.localStorage.clear())
       .then((res) => navigate('/login'))
@@ -35,19 +37,30 @@ export const Header = () => {
 
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand onClick={() => navigate('/')}><img style={{width: '150px'}} src='https://firebasestorage.googleapis.com/v0/b/water-track-337ea.appspot.com/o/speedkart%2Fspeedkart-logo.png?alt=media&token=81c4ca4e-3dff-46cb-8edd-d7a179ed0835'/></Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
-          <BiUserCircle size={30} color="white" 
-            onClick={handleClick}
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+        <Navbar.Brand onClick={() => navigate('/')}>
+          <img
+            style={{ width: '150px' }}
+            src="https://firebasestorage.googleapis.com/v0/b/water-track-337ea.appspot.com/o/speedkart%2Fspeedkart-logo.png?alt=media&token=81c4ca4e-3dff-46cb-8edd-d7a179ed0835"
           />
-          {/* <span>Mark Otto</span> */}
-          {/* </Container> */}
-        </Navbar.Collapse>
+        </Navbar.Brand>
+        <Navbar.Toggle />
+        {userId ? (
+          <Navbar.Collapse className="justify-content-end">
+            <BiUserCircle
+              size={30}
+              color="white"
+              onClick={handleClick}
+              sx={{ ml: 2 }}
+              aria-controls={open ? 'account-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+            />
+            {/* <span>Mark Otto</span> */}
+            {/* </Container> */}
+          </Navbar.Collapse>
+        ) : (
+          <></>
+        )}
       </Container>
       <Menu
         anchorEl={anchorEl}
@@ -88,13 +101,9 @@ export const Header = () => {
           My Profile
         </MenuItem>
         <Divider />
-        <MenuItem onClick={() => navigate('/orders')}>
-          My Orders
-        </MenuItem>
+        <MenuItem onClick={() => navigate('/orders')}>My Orders</MenuItem>
         <Divider />
-        <MenuItem onClick={handleLogOut}>
-          Logout
-        </MenuItem>
+        <MenuItem onClick={handleLogOut}>Logout</MenuItem>
       </Menu>
     </Navbar>
   );
