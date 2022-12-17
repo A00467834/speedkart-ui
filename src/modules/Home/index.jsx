@@ -12,6 +12,7 @@ import axiosWrapper from '../../apis/axiosCreate';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { setActiveOrders, getActiveOrders } from '../../store/reducers/ordersSlice';
+import { Loader } from '../Loader';
 
 let interval;
 
@@ -79,8 +80,12 @@ export const HomePage = (props) => {
   }, [userData]);
 
   useEffect(() => {
-    if (window.localStorage.getItem('sessionId') && !userData.customerId) {
-      checkValidSession(window.localStorage.getItem('sessionId'));
+    if (window.localStorage.getItem('sessionId')) {
+      if (!userData.customerId) {
+        checkValidSession(window.localStorage.getItem('sessionId'));
+      }
+    } else {
+      navigate('/login');
     }
   }, []);
 
@@ -139,7 +144,7 @@ export const HomePage = (props) => {
         }
       />
     </div>
-  ) : (
-    <>Not Logged In</>
+    ) : (
+    <Loader />
   );
 };
