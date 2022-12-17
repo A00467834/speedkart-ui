@@ -13,6 +13,7 @@ import { Cart } from './modules/Cart';
 import { Checkout } from './modules/Checkout';
 import { CartItemsList } from './modules/Cart/components/CartItemsList';
 import { OrderHistory } from './modules/Orders/components/OrderHistory';
+import { UserProfile } from './modules/AuthModule/UserProfile';
 
 const App = (props) => {
   return (
@@ -28,6 +29,7 @@ const App = (props) => {
           <Route exact path="/cart" element={<CartItemsList />} />
           <Route exact path="/orders" element={<OrderHistory />} />
           <Route exact path="/checkout" element={<Checkout />} />
+          <Route exact path='/userProfile' element={<UserProfile />} />
         </Routes>
       </BrowserRouter>
     </div>
