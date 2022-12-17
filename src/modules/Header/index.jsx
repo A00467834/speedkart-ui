@@ -6,26 +6,37 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { getUserId } from '../../store/reducers/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserId, setUser } from '../../store/reducers/authSlice';
+import { setCart, setOnScreenCart } from '../../store/reducers/cartReducer';
+import { setActiveOrders } from '../../store/reducers/ordersSlice';
+import { setProducts } from '../../store/reducers/productsSlice';
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const userId = useSelector(getUserId);
   const handleLogOut = async () => {
-    var sessionId=window.localStorage.getItem('sessionId');
+    var sessionId = window.localStorage.getItem('sessionId');
     await axiosWrapper
       .delete(`/Customer/destroySession/` + sessionId)
       .then((res) => console.log('logged out'))
       .then(window.localStorage.clear())
-      .then((res) => navigate('/login'))
+      .then((res) => {
+        dispatch(setUser({}))
+        dispatch(setCart([]))
+        dispatch(setOnScreenCart({}))
+        dispatch(setActiveOrders([]))
+        dispatch(setProducts([]))
+        navigate('/login')
+      })
       .catch((err) => console.error('Error in logout'));
-  }
+  };
   const handleProfile = () => {
-    navigate('/userProfile')
-  }
+    navigate('/userProfile');
+  };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -33,18 +44,17 @@ export const Header = () => {
     setAnchorEl(null);
   };
 
-  return (
-
-    <Navbar bg="dark" variant="dark">
-      <Container>
-        <Navbar.Brand onClick={() => navigate('/')}>
-          <img
-            style={{ width: '150px' }}
-            src="https://firebasestorage.googleapis.com/v0/b/water-track-337ea.appspot.com/o/speedkart%2Fspeedkart-logo.png?alt=media&token=81c4ca4e-3dff-46cb-8edd-d7a179ed0835"
-          />
-        </Navbar.Brand>
-        <Navbar.Toggle />
-        {userId ? (
+  return userId ? (
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand onClick={() => navigate('/')}>
+            <img
+              style={{ width: '150px' }}
+              src="https://firebasestorage.googleapis.com/v0/b/water-track-337ea.appspot.com/o/speedkart%2Fspeedkart-logo.png?alt=media&token=81c4ca4e-3dff-46cb-8edd-d7a179ed0835"
+            />
+          </Navbar.Brand>
+          <Navbar.Toggle />
+          {/* {userId ? ( */}
           <Navbar.Collapse className="justify-content-end">
             <BiUserCircle
               size={30}
@@ -58,53 +68,53 @@ export const Header = () => {
             {/* <span>Mark Otto</span> */}
             {/* </Container> */}
           </Navbar.Collapse>
-        ) : (
+          {/* ) : (
           <></>
-        )}
-      </Container>
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
+        )} */}
+        </Container>
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
             },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={handleProfile}>
-          My Profile
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={() => navigate('/orders')}>My Orders</MenuItem>
-        <Divider />
-        <MenuItem onClick={handleLogOut}>Logout</MenuItem>
-      </Menu>
-    </Navbar>
-  );
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          <MenuItem onClick={handleProfile}>My Profile</MenuItem>
+          <Divider />
+          <MenuItem onClick={() => navigate('/orders')}>My Orders</MenuItem>
+          <Divider />
+          <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+        </Menu>
+      </Navbar>
+    ) : (
+      <></>
+    );
 };

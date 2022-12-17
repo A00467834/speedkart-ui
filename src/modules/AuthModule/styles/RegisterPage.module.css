@@ -15,7 +15,4 @@
         flex-direction: row;
         justify-content: space-between;
     }
-    .regFormTextFields {
-        width: 49%;
-    }
 }
