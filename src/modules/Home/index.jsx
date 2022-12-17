@@ -110,6 +110,6 @@ export const HomePage = (props) => {
       {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} /> : <></>}
     </div>
   ) : (
-    <Navigate to={{ pathname: '/login'}} />
+    <>Not Logged In</>
   );
 };
