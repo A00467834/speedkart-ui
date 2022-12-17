@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { OnScreenCart } from '../Cart/components/OnScreenCart';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useState } from 'react';
+import { Navigate } from 'react-router';
 
 let interval;
 
@@ -109,6 +110,6 @@ export const HomePage = (props) => {
       {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} /> : <></>}
     </div>
   ) : (
-    <>Not logged in </>
+    <Navigate to={{ pathname: '/login'}} />
   );
 };
