@@ -5,20 +5,23 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import axiosWrapper from '../../apis/axiosCreate';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  // const navigate = useNavigate();
-    const handleLogOut = async () => {
+  const navigate = useNavigate();
+  const handleLogOut = async () => {
     var sessionId=window.localStorage.getItem('sessionId');
     await axiosWrapper
       .delete(`/Customer/destroySession/`+sessionId)
       .then((res) => console.log('logged out'))
       .then(window.localStorage.clear())
-      // .then((res) => navigate('/login'))
+      .then((res) => navigate('/login'))
       .catch((err) => console.error('Error in logout'));
+  }
+  const handleProfile = () => {
+    navigate('/userProfile')
   }
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,6 +31,7 @@ export const Header = () => {
   };
 
   return (
+
     <Navbar bg="dark" variant="dark">
       <Container>
         <Navbar.Brand href="#home">SpeedKart</Navbar.Brand>
@@ -80,7 +84,7 @@ export const Header = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleProfile}>
           My Profile
         </MenuItem>
         <Divider />
