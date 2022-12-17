@@ -9,7 +9,7 @@ export const OnScreenCart = ({ onScreenCartItems, onScreenActiveOrders }) => {
   const navigate = useNavigate();
   return (
     <div className={styles.OnScreenCartContainer}>
-    <Button onClick={() => navigate('/cart')}>
+    <Button className= {styles.buttonMargin} onClick={() => navigate('/cart')}>
       <div>
         {totalItems} items | {totalPrice}$
       </div>
@@ -20,7 +20,7 @@ export const OnScreenCart = ({ onScreenCartItems, onScreenActiveOrders }) => {
         </span>
       </div>
     </Button>
-    <Button onClick={() => navigate('/cart')}>
+    <Button className= {styles.buttonMargin} onClick={() => navigate('/cart')}>
       <div>
         {totalItems} items | {totalPrice}$
       </div>

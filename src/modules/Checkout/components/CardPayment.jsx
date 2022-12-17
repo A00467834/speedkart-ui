@@ -182,7 +182,7 @@ export default class App extends React.Component {
                 {this.state.isNameOnCardValid === false && <small>{this.getNameErrorText()}</small>}
               </div>
               <div className="row">
-                <div className="col-6">
+                <div className="col-8">
                   <input
                     type="tel"
                     name="expiry"
@@ -198,7 +198,7 @@ export default class App extends React.Component {
                   />
                   {this.state.isExpiryValid === false && <small>{this.getExpiryErrorText()}</small>}
                 </div>
-                <div className="col-6">
+                <div className="col-4">
                   <input
                     type="tel"
                     name="cvc"
