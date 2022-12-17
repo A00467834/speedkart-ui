@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const handleLogOut = async () => {
@@ -34,10 +35,9 @@ export const Header = () => {
 
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand href="#home">SpeedKart</Navbar.Brand>
+        <Navbar.Brand onClick={() => navigate('/')}><img style={{width: '150px'}} src='https://firebasestorage.googleapis.com/v0/b/water-track-337ea.appspot.com/o/speedkart%2Fspeedkart-logo.png?alt=media&token=81c4ca4e-3dff-46cb-8edd-d7a179ed0835'/></Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
-          {/* <Container className='header-profile-icon-container'> */}
           <BiUserCircle size={30} color="white" 
             onClick={handleClick}
             sx={{ ml: 2 }}
@@ -45,7 +45,7 @@ export const Header = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           />
-          {/* <span href="#login">Mark Otto</span> */}
+          {/* <span>Mark Otto</span> */}
           {/* </Container> */}
         </Navbar.Collapse>
       </Container>
@@ -88,7 +88,7 @@ export const Header = () => {
           My Profile
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={() => navigate('/orders')}>
           My Orders
         </MenuItem>
         <Divider />

@@ -15,4 +15,12 @@
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 3%;
+    padding: 20px;
+}
+
+.checkoutBillItem {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    padding: 10px;
+    text-align: center;
 }
