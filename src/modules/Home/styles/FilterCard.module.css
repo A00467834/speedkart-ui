@@ -9,6 +9,11 @@
     color: black;
 }
 
+.filterCardContainer:hover {
+    background: transparent;
+    color: black;
+}
+
 .filterCardImage {
     height: 80px;
     width: 80px;

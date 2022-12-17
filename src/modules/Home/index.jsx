@@ -10,24 +10,25 @@ import { useEffect } from 'react';
 import { OnScreenCart } from '../Cart/components/OnScreenCart';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useState } from 'react';
-import { Navigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { setActiveOrders, getActiveOrders } from '../../store/reducers/ordersSlice';
 
 let interval;
 
 export const HomePage = (props) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useSelector(getUser);
   const onScreenCart = useSelector(selectOnScreenCart);
-  const onScreenActiveOrders = useSelector(getActiveOrders)
+  const onScreenActiveOrders = useSelector(getActiveOrders);
   const [categories, setCategories] = useState([]);
   const [selectedCatergoryId, setSelectedCategoryId] = useState(null);
 
   const getAllActiveOrders = async () => {
     await axiosWrapper.get(`/Order/activeOrder/${userData.customerId}`).then((resp) => {
-      dispatch(setActiveOrders(resp.data))
+      dispatch(setActiveOrders(resp.data));
     });
-  }
+  };
 
   const getOnScreenCart = useCallback(async () => {
     await axiosWrapper.get(`/Cart/onScreenCart/${userData.customerId}`).then((resp) => {
@@ -90,9 +91,16 @@ export const HomePage = (props) => {
   }, [selectedCatergoryId]);
 
   const checkValidSession = async (sessionId) => {
-    await axiosWrapper.post(`Customer/validSession/${sessionId}`).then((resp) => {
-      dispatch(setUser(resp.data));
-    });
+    await axiosWrapper
+      .post(`Customer/validSession/${sessionId}`)
+      .then((resp) => {
+        dispatch(setUser(resp.data));
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          navigate('/login');
+        }
+      });
   };
 
   const searchOnChange = (ev) => {
@@ -110,12 +118,26 @@ export const HomePage = (props) => {
       <Filters
         categories={categories}
         selectedFilterId={selectedCatergoryId}
-        categoryChange={(val) => setSelectedCategoryId(val)}
+        categoryChange={(val) => {
+          if (val === selectedCatergoryId) {
+            setSelectedCategoryId(null);
+            getProducts();
+          } else {
+            setSelectedCategoryId(val);
+          }
+        }}
       />
       <div style={{ padding: '10px' }}>
         <ProductList searchOnChange={searchOnChange} />
       </div>
-      {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} onScreenActiveOrders={onScreenActiveOrders} /> : <></>}
+      <OnScreenCart
+        onScreenCartItems={onScreenCart}
+        onScreenActiveOrders={
+          onScreenActiveOrders && onScreenActiveOrders.length
+            ? onScreenActiveOrders[onScreenActiveOrders.length - 1]
+            : {}
+        }
+      />
     </div>
   ) : (
     <>Not Logged In</>

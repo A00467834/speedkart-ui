@@ -171,7 +171,6 @@ export const ProductList = ({searchOnChange}) => {
       <div className={styles.productListContainer}>
         {products.map((product) => (
           <Button
-            onClick={() => navigate('/product')}
             style={{ background: 'transparent' }}
             className={styles.productCard}
           >
@@ -180,7 +179,7 @@ export const ProductList = ({searchOnChange}) => {
                 component="img"
                 alt="green iguana"
                 height="140"
-                image="https://media.istockphoto.com/id/941825878/photo/tomato-with-slice-isolated-with-clipping-path.jpg?s=612x612&w=0&k=20&c=P3PQlDAxzgx5i1hGCHKEcBy-rZmqn4f5CZPggWnh9yQ="
+                image={product.imageUrl}
               />
               <p
                 style={{
