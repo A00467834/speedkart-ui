@@ -8,6 +8,7 @@ import { BillDetails } from './components/BillDetails';
 import CardPayment from './components/CardPayment';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useNavigate } from 'react-router-dom';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 Date.prototype.addHours = function (h) {
   this.setHours(this.getHours() + h);
@@ -23,13 +24,15 @@ export const Checkout = () => {
     deliveryFee: 20,
     toPay: 0,
   });
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (cartItems && cartItems.length) {
-      let subTotal = Math.round((cartItems.reduce((acc, curr) => acc + curr.subtotal, 0) * 100))/100;
-      let tax = Math.round((subTotal * 0.15)*100)/100;
+      let subTotal =
+        Math.round(cartItems.reduce((acc, curr) => acc + curr.subtotal, 0) * 100) / 100;
+      let tax = Math.round(subTotal * 0.15 * 100) / 100;
       let toPay = Math.round((subTotal + tax + priceObj.deliveryFee) * 100) / 100;
       setPriceObj((prev) => ({ ...prev, subTotal, tax, toPay }));
     }
@@ -42,7 +45,6 @@ export const Checkout = () => {
       quantity: item.quantity,
       cartId: item.cartId,
     }));
-    console.log(payloadCartItems);
     const bodyPayload = {
       orderStatus: 'paymentsuccess',
       cartDetails: payloadCartItems,
@@ -52,12 +54,19 @@ export const Checkout = () => {
       deliveryDateTime,
     };
     await axiosWrapper.post('/order/placeOrder', bodyPayload).then((resp) => {
-      navigate('/');
+      setOrderPlaced(true);
     });
   };
 
   return (
     <div>
+      {orderPlaced ? (
+        <SweetAlert success title="Payment Successfull!" onConfirm={() => navigate('/')}>
+          Your order has been placed!
+        </SweetAlert>
+      ) : (
+        <></>
+      )}
       <BillDetails items={cartItems} priceObject={priceObj} />
       <CardPayment
         onPayClick={(val) => {

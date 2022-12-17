@@ -21,7 +21,7 @@ const countries = [
 
 const noSpecialCharsRegExp = /^[^;:!@#$%^*+?\\/<>1234567890]+$/;
 const phoneNoRegExp = /^(\+0?1\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-const emailRegExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+export const emailRegExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const postalCodeRegExp = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
 const zipCodeRegExp = /^\d{5}(?:[-\s]\d{4})?$/;
 
@@ -292,7 +292,7 @@ export const RegisterPage = () => {
             <></>
           )}
         </div>
-        <button id="sub_btn" type="submit" disabled={formInvalid}>
+        <button id="sub_btn" type="submit" disabled={formInvalid || !addressVerified}>
           Register
         </button>
       </form>
