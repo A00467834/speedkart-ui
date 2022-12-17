@@ -1,0 +1,16 @@
+.billDetailsContainer {
+    margin: 10px;
+    border: 1px solid;
+    border-radius: 20px;
+}
+
+.checkoutBillItem {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 10px;
+    text-align: center;
+}
+
+.checkoutBillItemTotals {
+    grid-template-columns: 4fr 1fr;
+}

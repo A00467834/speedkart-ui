@@ -11,6 +11,7 @@ import { OnScreenCart } from '../Cart/components/OnScreenCart';
 import axiosWrapper from '../../apis/axiosCreate';
 import { useState } from 'react';
 import { Navigate } from 'react-router';
+import { setActiveOrders, getActiveOrders } from '../../store/reducers/ordersSlice';
 
 let interval;
 
@@ -18,12 +19,20 @@ export const HomePage = (props) => {
   const dispatch = useDispatch();
   const userData = useSelector(getUser);
   const onScreenCart = useSelector(selectOnScreenCart);
+  const onScreenActiveOrders = useSelector(getActiveOrders)
   const [categories, setCategories] = useState([]);
   const [selectedCatergoryId, setSelectedCategoryId] = useState(null);
+
+  const getAllActiveOrders = async () => {
+    await axiosWrapper.get(`/Order/activeOrder/${userData.customerId}`).then((resp) => {
+      dispatch(setActiveOrders(resp.data))
+    });
+  }
 
   const getOnScreenCart = useCallback(async () => {
     await axiosWrapper.get(`/Cart/onScreenCart/${userData.customerId}`).then((resp) => {
       dispatch(setOnScreenCart(resp.data));
+      getAllActiveOrders();
       getCategories();
       getProducts(null, resp.data);
     });
@@ -60,7 +69,6 @@ export const HomePage = (props) => {
         }
         return { ...product, quantity: 0 };
       });
-      console.log(onScreenCart, 'onScreenCart');
       dispatch(setProducts(modifiedProductsData));
     });
   };
@@ -107,7 +115,7 @@ export const HomePage = (props) => {
       <div style={{ padding: '10px' }}>
         <ProductList searchOnChange={searchOnChange} />
       </div>
-      {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} /> : <></>}
+      {onScreenCart.totalItems > 0 ? <OnScreenCart onScreenCartItems={onScreenCart} onScreenActiveOrders={onScreenActiveOrders} /> : <></>}
     </div>
   ) : (
     <>Not Logged In</>

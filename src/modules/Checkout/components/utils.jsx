@@ -35,12 +35,15 @@ export function validateCardType(value) {
   return false;
 }
 
+export function getIssuer(cardNumber) {
+  return Payment.fns.cardType(cardNumber);
+}
+
 export function formatCreditCardNumber(value) {
   if (!value) {
     return value;
   }
 
-  // const issuer = Payment.fns.cardType(value);
   const issuer = Payment.fns.cardType(value);
   const clearValue = clearNumber(value);
   let nextValue;
