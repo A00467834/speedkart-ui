@@ -6,11 +6,12 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import {TiTick} from 'react-icons/ti';
+import { TiTick } from 'react-icons/ti';
 import Styles from './styles/RegisterPage.module.css';
 import axiosWrapper from '../../apis/axiosCreate';
 import '../../App.css';
 import { Button } from 'react-bootstrap';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 const countries = [
   {
@@ -59,6 +60,10 @@ const validationRules = {
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
+  const [addressVerifiedSuccessModal, setAddressVerifiedSuccessModal] = useState(false);
+  const [addressVerifiedFailureModal, setAddressVerifiedFailureModal] = useState(false);
+  const [registeredSuccess, setRegisteredSuccess] = useState(false);
+
   const [formVals, setFormVals] = useState({
     firstName: { val: '', error: '' },
     lastName: { val: '', error: '' },
@@ -93,7 +98,10 @@ export const RegisterPage = () => {
     };
     await axiosWrapper
       .post(`/Customer/signup`, body)
-      .then((res) => navigate('/login'))
+      .then((res) => {
+        setRegisteredSuccess(true)
+        // navigate('/login')
+      })
       .catch((err) => console.error('Error in signup'));
   };
 
@@ -140,214 +148,268 @@ export const RegisterPage = () => {
       zipPostal.val &&
       !zipPostal.error
     ) {
-        await fetch('https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyDeOekGPW4_3v_W8H9IwjDAtnravRBEPRs',
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              address: {
-                regionCode: country.val,
-                locality: city.val,
-                administrativeArea: provinceState.val,
-                postalCode: zipPostal.val,
-                addressLines: [doorStreet.val],
-              },
-            }),
-          },
-        )
-          .then((resp) => resp.json())
-          .then((resp) => {
-            setAddressVerified(!resp.result.verdict.hasUnconfirmedComponents);
-          });
+      await fetch(
+        'https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyDeOekGPW4_3v_W8H9IwjDAtnravRBEPRs',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            address: {
+              regionCode: country.val,
+              locality: city.val,
+              administrativeArea: provinceState.val,
+              postalCode: zipPostal.val,
+              addressLines: [doorStreet.val],
+            },
+          }),
+        },
+      )
+        .then((resp) => resp.json())
+        .then((resp) => {
+          if (resp.result.verdict.hasUnconfirmedComponents) {
+            setAddressVerifiedFailureModal(true);
+          } else {
+            setAddressVerifiedSuccessModal(true);
+          }
+          setAddressVerified(!resp.result.verdict.hasUnconfirmedComponents);
+        });
     }
   };
 
   return (
     <div className="text-center m-5-auto" style={{ height: '100%' }}>
+      {addressVerifiedSuccessModal && (
+        <SweetAlert success title="Yayy!" onConfirm={() => setAddressVerifiedSuccessModal(false)}>
+          Address Verified
+        </SweetAlert>
+      )}
+      {addressVerifiedFailureModal && (
+        <SweetAlert danger title="Oopss!" onConfirm={() => setAddressVerifiedFailureModal(false)}>
+          Your address is not verified
+        </SweetAlert>
+      )}
+      {registeredSuccess && (
+        <SweetAlert success title="Yayy!" onConfirm={() => {setRegisteredSuccess(false); navigate('/login')}}>
+        Registed. Login to continue
+      </SweetAlert>
+      )}
       <form
         onSubmit={onSubmit}
-        style={{ margin: '0px', minWidth: '100%', minHeight: '100%', background: '#212529', display: 'flex', flexDirection: 'column', gap: '10px' }}
+        style={{
+          margin: '0px',
+          minWidth: '100%',
+          minHeight: '100%',
+          background: '#212529',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+        }}
       >
         {/* <div className={Styles.registrationForm}> */}
         <div class="registration-form-heading">
           <h1>Register Now.</h1>
         </div>
         <div className="double-form-container">
-        <div
-          className='double-form-container-form'
-          style={{
-            padding: '20px',
-            border: '1px solid',
-            borderRadius: '20px',
-            background: '#f3f3f3',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
-        >
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="First Name"
-            value={firstName.val}
-            onChange={(ev) => updateForm('firstName', ev.target.value)}
-            error={!!firstName.error}
-            helperText={firstName.error}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Last Name"
-            value={lastName.val}
-            onChange={(ev) => updateForm('lastName', ev.target.value)}
-            error={!!lastName.error}
-            helperText={lastName.error}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Phone Number"
-            value={phoneNo.val}
-            onChange={(ev) => updateForm('phoneNo', ev.target.value)}
-            error={!!phoneNo.error}
-            helperText={phoneNo.error}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Email Address"
-            value={email.val}
-            onChange={(ev) => updateForm('email', ev.target.value)}
-            error={!!email.error}
-            helperText={email.error}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Password"
-            type="password"
-            value={pass.val}
-            onChange={(ev) => updateForm('pass', ev.target.value)}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Confirm Password"
-            type="password"
-            value={confirmPass.val}
-            onChange={(ev) => updateForm('confirmPass', ev.target.value)}
-          />
-        </div>
-        <div
-        className='double-form-container-form'
-          style={{
-            padding: '20px',
-            border: '1px solid',
-            borderRadius: '20px',
-            background: '#f3f3f3',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
-        >
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Door No.& Street Name"
-            value={doorStreet.val}
-            onChange={(ev) => updateForm('doorStreet', ev.target.value)}
-            InputProps={{
-              endAdornment: addressVerified ? (<InputAdornment position="end"><TiTick color='green' /></InputAdornment>) : (<></>),
+          <div
+            className="double-form-container-form"
+            style={{
+              padding: '20px',
+              border: '1px solid',
+              borderRadius: '20px',
+              background: '#f3f3f3',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
             }}
-            // onBlur={() => validateAddress()}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Province"
-            value={provinceState.val}
-            onChange={(ev) => updateForm('provinceState', ev.target.value)}
-            // onBlur={() => validateAddress()}
-            InputProps={{
-              endAdornment: addressVerified ? (<InputAdornment position="end"><TiTick color='green' /></InputAdornment>) : (<></>),
+          >
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="First Name"
+              value={firstName.val}
+              onChange={(ev) => updateForm('firstName', ev.target.value)}
+              error={!!firstName.error}
+              helperText={firstName.error}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Last Name"
+              value={lastName.val}
+              onChange={(ev) => updateForm('lastName', ev.target.value)}
+              error={!!lastName.error}
+              helperText={lastName.error}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Phone Number"
+              value={phoneNo.val}
+              onChange={(ev) => updateForm('phoneNo', ev.target.value)}
+              error={!!phoneNo.error}
+              helperText={phoneNo.error}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Email Address"
+              value={email.val}
+              onChange={(ev) => updateForm('email', ev.target.value)}
+              error={!!email.error}
+              helperText={email.error}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Password"
+              type="password"
+              value={pass.val}
+              onChange={(ev) => updateForm('pass', ev.target.value)}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Confirm Password"
+              type="password"
+              value={confirmPass.val}
+              onChange={(ev) => updateForm('confirmPass', ev.target.value)}
+            />
+          </div>
+          <div
+            className="double-form-container-form"
+            style={{
+              padding: '20px',
+              border: '1px solid',
+              borderRadius: '20px',
+              background: '#f3f3f3',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
             }}
-            error={!!provinceState.error}
-            helperText={provinceState.error}
-          />
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="City"
-            value={city.val}
-            onChange={(ev) => updateForm('city', ev.target.value)}
-            // onBlur={() => validateAddress()}
-            InputProps={{
-              endAdornment: addressVerified ? (<InputAdornment position="end"><TiTick color='green' /></InputAdornment>) : (<></>),
-            }}
-            error={!!city.error}
-            helperText={city.error}
-          />
-          <FormControl className={Styles.regFormTextFields}>
-            <InputLabel id="demo-simple-select-label">Country</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Country"
-              value={country.val}
-              onChange={(ev) => updateForm('country', ev.target.value)}
+          >
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Door No.& Street Name"
+              value={doorStreet.val}
+              onChange={(ev) => updateForm('doorStreet', ev.target.value)}
               InputProps={{
-                endAdornment: addressVerified ? (<InputAdornment position="end"><TiTick color='green' /></InputAdornment>) : (<></>),
+                endAdornment: addressVerified ? (
+                  <InputAdornment position="end">
+                    <TiTick color="green" />
+                  </InputAdornment>
+                ) : (
+                  <></>
+                ),
               }}
               // onBlur={() => validateAddress()}
-              error={!!country.error}
-              helperText={country.error}
-            >
-              {countries.map((country) => (
-                <MenuItem value={country.code}>{country.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            className={Styles.regFormTextFields}
-            required
-            id="outlined-required"
-            label="Zip / Postal Code"
-            value={zipPostal.val}
-            onChange={(ev) => updateForm('zipPostal', ev.target.value)}
-            InputProps={{
-              endAdornment: addressVerified ? (<InputAdornment position="end"><TiTick color='green' /></InputAdornment>) : (<></>),
-            }}
-            // onBlur={() => validateAddress()}
-            error={!!zipPostal.error}
-            helperText={zipPostal.error}
-          />
-          <Button onClick={() => validateAddress()}>Validate Address</Button>
-        </div>
-        </div>
-        {/* {addressVerified ? (
-          <div
-            className={Styles.regFormTextFields}
-            style={{ background: addressVerified ? 'green' : '' }}
-          >
-            Verified
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Province"
+              value={provinceState.val}
+              onChange={(ev) => updateForm('provinceState', ev.target.value)}
+              onBlur={() => setAddressVerified(false)}
+              InputProps={{
+                endAdornment: addressVerified ? (
+                  <InputAdornment position="end">
+                    <TiTick color="green" />
+                  </InputAdornment>
+                ) : (
+                  <></>
+                ),
+              }}
+              error={!!provinceState.error}
+              helperText={provinceState.error}
+            />
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="City"
+              value={city.val}
+              onChange={(ev) => updateForm('city', ev.target.value)}
+              onBlur={() => setAddressVerified(false)}
+              InputProps={{
+                endAdornment: addressVerified ? (
+                  <InputAdornment position="end">
+                    <TiTick color="green" />
+                  </InputAdornment>
+                ) : (
+                  <></>
+                ),
+              }}
+              error={!!city.error}
+              helperText={city.error}
+            />
+            <FormControl className={Styles.regFormTextFields}>
+              <InputLabel id="demo-simple-select-label">Country</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Country"
+                value={country.val}
+                onBlur={() => setAddressVerified(false)}
+                onChange={(ev) => updateForm('country', ev.target.value)}
+                InputProps={{
+                  endAdornment: addressVerified ? (
+                    <InputAdornment position="end">
+                      <TiTick color="green" />
+                    </InputAdornment>
+                  ) : (
+                    <></>
+                  ),
+                }}
+                // onBlur={() => validateAddress()}
+                error={!!country.error}
+                helperText={country.error}
+              >
+                {countries.map((country) => (
+                  <MenuItem value={country.code}>{country.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              className={Styles.regFormTextFields}
+              required
+              id="outlined-required"
+              label="Zip / Postal Code"
+              value={zipPostal.val}
+              onChange={(ev) => updateForm('zipPostal', ev.target.value)}
+              InputProps={{
+                endAdornment: addressVerified ? (
+                  <InputAdornment position="end">
+                    <TiTick color="green" />
+                  </InputAdornment>
+                ) : (
+                  <></>
+                ),
+              }}
+              // onBlur={() => validateAddress()}
+              onBlur={() => setAddressVerified(false)}
+              error={!!zipPostal.error}
+              helperText={zipPostal.error}
+            />
+            <Button onClick={() => validateAddress()}>Validate Address</Button>
           </div>
-        ) : (
-          <></>
-        )} */}
-        {/* </div> */}
+        </div>
         <button id="sub_btn" type="submit" disabled={formInvalid || !addressVerified}>
           Register
         </button>
-        <p style={{color: 'white'}}>
-          Already a user? <Link style={{color:'white'}} to="/login">Login using your account.</Link>.
+        <p style={{ color: 'white' }}>
+          Already a user?{' '}
+          <Link style={{ color: 'white' }} to="/login">
+            Login using your account.
+          </Link>
+          .
         </p>
       </form>
       <footer></footer>
